@@ -1,5 +1,5 @@
 {
-  "name": "restoraso-citra",
+  "name": "restorasi-citra",
   "version": "1.0.0",
   "scripts": {
     "build-css": "tailwindcss -i ./static/css/input.css -o ./static/dist/output.css"
