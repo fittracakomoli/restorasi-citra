@@ -2,8 +2,7 @@
   "name": "restorasi-citra",
   "version": "1.0.0",
   "scripts": {
-    "build-css": "tailwindcss -i ./static/src/input.css -o ./static/dist/output.css",
-    "requirements": "python install -r requirements.txt"
+    "build-css": "tailwindcss -i ./static/src/input.css -o ./static/dist/output.css"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.7",
