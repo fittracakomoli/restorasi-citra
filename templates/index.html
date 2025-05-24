@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restorasi Citra</title>
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='dist/output.css')}}"
+    />
+  </head>
+  <body class="bg-white">
+    <nav x-data="{ open: false }" class="fixed w-full">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-24">
+          <!-- Logo -->
+          <a
+            href="/"
+            class="-m-1.5 p-1.5 flex items-center gap-6 text-gray-900"
+          >
+            <span class="sr-only">Hima Ilkom UNNES</span>
+            <img
+              class="h-10 w-auto"
+              src="{{ url_for('static', filename='images/abar.png') }}"
+              alt="Logo"
+            />
+            <div>
+              <p class="font-bold text-lg">RESTORASI CITRA</p>
+              <p class="text-sm">Pengolahan Citra</p>
+            </div>
+          </a>
+
+          <!-- Navigation Links -->
+          <div class="hidden space-x-8 md:-my-px md:ms-10 md:flex">
+            <a
+              href="/"
+              class="inline-flex items-center px-1 pt-1 border-b-4 border-transparent text-md font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-primary-700 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out {% if active == 'index' %}border-b-4 border-primary-700 text-gray-900{% endif %}"
+            >
+              Beranda
+            </a>
+            <a
+              href="/noisy"
+              class="inline-flex items-center px-1 pt-1 border-b-4 border-transparent text-md font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-primary-700 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out {% if active == 'noisy' %}border-b-4 border-primary-700 text-gray-900{% endif %}"
+            >
+              Tambahkan Noise
+            </a>
+            <a
+              href="/restore"
+              class="inline-flex items-center px-1 pt-1 border-b-4 border-transparent text-md font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-primary-700 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out {% if active == 'restore' %}border-b-4 border-primary-700 text-gray-900{% endif %}"
+            >
+              Hilangkan Noise
+            </a>
+          </div>
+
+          <!-- Hamburger -->
+          <div class="-me-2 flex items-center md:hidden">
+            <button
+              @click="open = ! open"
+              class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+            >
+              <svg
+                class="h-6 w-6"
+                stroke="currentColor"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  :class="{'hidden': open, 'inline-flex': ! open }"
+                  class="inline-flex"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+                <path
+                  :class="{'hidden': ! open, 'inline-flex': open }"
+                  class="hidden"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Responsive Navigation Menu -->
+      <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden">
+        <div class="pt-2 pb-3 space-y-1">
+          <a
+            href="/"
+            class="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-200 {% if active == 'home' %}bg-gray-100{% endif %}"
+          >
+            Beranda
+          </a>
+          <a
+            href="/about"
+            class="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-200 {% if active == 'about' %}bg-gray-100{% endif %}"
+          >
+            Tentang
+          </a>
+          <a
+            href="/structure"
+            class="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-200 {% if active == 'structure' %}bg-gray-100{% endif %}"
+          >
+            Struktur
+          </a>
+          <a
+            href="/program"
+            class="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-200 {% if active == 'program' %}bg-gray-100{% endif %}"
+          >
+            Program Kerja
+          </a>
+          <a
+            href="/news"
+            class="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-200 {% if active == 'news' %}bg-gray-100{% endif %}"
+          >
+            Berita
+          </a>
+          <a
+            href="/contact"
+            class="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-200 {% if active == 'contact' %}bg-gray-100{% endif %}"
+          >
+            Kontak Kami
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <section
+      style="background-image: url('../static/images/bg.jpg')"
+      class="bg-cover bg-center pt-24 bg-no-repeat bg-gray-400 bg-blend-multiply"
+    >
+      <div class="px-4 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
+        <h1
+          class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-white md:text-5xl lg:text-6xl"
+          >RESTORASI CITRA</h1
+        >
+        <p
+          class="mb-8 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 lg:px-48"
+          >Perbaiki Gambarmu, Hapus Noise, dan Tingkatkan Kualitas Visual dengan
+          Kejernihan yang Lebih Sempurna.</p
+        >
+        <div
+          class="flex gap-4 flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0"
+        >
+          <a
+            href="/noisy"
+            class="inline-flex btn1 justify-center items-center py-3 px-5 text-base font-medium text-center text-black rounded-lg"
+          >
+            Tambahkan Noise
+          </a>
+          <a
+            href="/restore"
+            class="inline-flex btn2 justify-center hover:text-gray-900 items-center py-3 px-5 ms-4 text-base font-medium text-center text-white rounded-lg border border-white hover:bg-secondary-900 focus:ring-4 focus:ring-gray-400"
+          >
+            Hilangkan Noise
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white">
+      <div
+        class="gap-8 items-center py-8 px-4 mx-auto max-w-screen-xl xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6"
+      >
+        <img
+          class="w-full"
+          src="{{ url_for('static', filename='images/hero-1.png') }}"
+          alt="dashboard image"
+        />
+        <div class="mt-4 md:mt-0">
+          <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900"
+            >Mengenal Tentang Restorasi Citra</h2
+          >
+          <p class="mb-6 font-light text-gray-500 md:text-lg"
+            >Restorasi citra adalah proses untuk memperbaiki kualitas citra yang
+            telah terdegradasi akibat gangguan seperti noise, blur, atau
+            distorsi lainnya. Tujuan dari restorasi citra adalah mengembalikan
+            citra ke kondisi semula atau memperbaiki elemen yang hilang sehingga
+            informasi visual yang terkandung dalam citra lebih jelas dan lebih
+            dapat diinterpretasikan. Teknik yang digunakan dalam restorasi citra
+            melibatkan filter, transformasi frekuensi, dan algoritma matematika
+            lainnya untuk mengurangi atau menghilangkan noise serta mengoreksi
+            ketidaksempurnaan dalam gambar. Restorasi citra banyak digunakan
+            dalam berbagai aplikasi seperti pengolahan citra medis, fotografi,
+            dan pemantauan kualitas citra dalam industri.</p
+          >
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white">
+      <div
+        class="gap-8 items-center py-8 px-4 mx-auto max-w-screen-xl xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6"
+      >
+        <div class="mt-4 md:mt-0">
+          <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900"
+            >Tambahkan & Hilangkan Noise dalam Fitur Restorasi</h2
+          >
+          <p class="mb-6 font-light text-gray-500 md:text-lg"
+            >Tambahkan dan hilangkan noise dalam fitur restorasi citra merujuk
+            pada dua langkah penting dalam perbaikan kualitas citra. Proses
+            menambahkan noise bertujuan untuk mensimulasikan gangguan eksternal
+            seperti noise Gaussian, salt-and-pepper, atau periodik, yang
+            memungkinkan pengujian efektivitas metode restorasi citra dalam
+            mengembalikan citra ke kondisi semula. Sementara itu, menghilangkan
+            noise merupakan langkah utama dalam restorasi citra, yang bertujuan
+            untuk mengurangi atau menghapus noise yang ada dengan menggunakan
+            teknik seperti filter median, atau metode lebih kompleks seperti
+            Filter Notch dan Gaussian Filtering.
+          </p>
+        </div>
+        <img
+          class="w-full"
+          src="{{ url_for('static', filename='images/hero-2.jpg') }}"
+          alt="dashboard image"
+        />
+      </div>
+    </section>
+
+    <section class="bg-white">
+      <div
+        class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-6"
+      >
+        <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
+          <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900"
+            >Tim Terbaik Kami</h2
+          >
+          <p class="font-light text-gray-500 sm:text-xl"
+            >Untuk mencapai hasil yang luar biasa, dibutuhkan lebih dari sekadar
+            keterampilan dibutuhkan kolaborasi, dedikasi, dan semangat yang tak
+            tergoyahkan</p
+          >
+        </div>
+        <div
+          class="grid gap-8 lg:gap-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+        >
+          <div class="text-center text-gray-500">
+            <img
+              class="mx-auto mb-4 w-36 h-36 rounded-full"
+              src="{{ url_for('static', filename='images/ahong.jpg') }}"
+              alt="Zharfan"
+            />
+            <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">
+              <a href="#">M Zharfan Tanuwijaya</a>
+            </h3>
+            <p>Project Manager</p>
+            <ul class="flex justify-center mt-4 space-x-4">
+              <li>
+                <a href="#" class="text-[#39569c] hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="text-gray-900 hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="text-center text-gray-500">
+            <img
+              class="mx-auto mb-4 w-36 h-36 rounded-full"
+              src="{{ url_for('static', filename='images/jeki.jpg') }}"
+              alt="Dzaky"
+            />
+            <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">
+              <a href="#">Muhammad Dzaky</a>
+            </h3>
+            <p>Research</p>
+            <ul class="flex justify-center mt-4 space-x-4">
+              <li>
+                <a href="#" class="text-[#39569c] hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="text-gray-900 hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="text-center text-gray-500">
+            <img
+              class="mx-auto mb-4 w-36 h-36 rounded-full"
+              src="{{ url_for('static', filename='images/ihza.jpg') }}"
+              alt="Ihza"
+            />
+            <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">
+              <a href="#">Ihza Ferdina</a>
+            </h3>
+            <p>UI/UX Design</p>
+            <ul class="flex justify-center mt-4 space-x-4">
+              <li>
+                <a href="#" class="text-[#39569c] hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="text-gray-900 hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="text-center text-gray-500">
+            <img
+              class="mx-auto mb-4 w-36 h-36 rounded-full"
+              src="{{ url_for('static', filename='images/zidnan.jpg') }}"
+              alt="Zidnan"
+            />
+            <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">
+              <a href="#">Zidnan Ali</a>
+            </h3>
+            <p>Backend</p>
+            <ul class="flex justify-center mt-4 space-x-4">
+              <li>
+                <a href="#" class="text-[#39569c] hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="text-gray-900 hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="text-center text-gray-500">
+            <img
+              class="mx-auto mb-4 w-36 h-36 rounded-full"
+              src="{{ url_for('static', filename='images/yoga.jpg') }}"
+              alt="Yoga"
+            />
+            <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">
+              <a href="#">Prayoga Adi Brata</a>
+            </h3>
+            <p>Research</p>
+            <ul class="flex justify-center mt-4 space-x-4">
+              <li>
+                <a href="#" class="text-[#39569c] hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="text-gray-900 hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="text-center text-gray-500">
+            <img
+              class="mx-auto mb-4 w-36 h-36 rounded-full"
+              src="{{ url_for('static', filename='images/farel.jpg') }}"
+              alt="Farrel"
+            />
+            <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">
+              <a href="#">Farrel Athaillah Putra</a>
+            </h3>
+            <p>Backend</p>
+            <ul class="flex justify-center mt-4 space-x-4">
+              <li>
+                <a href="#" class="text-[#39569c] hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="text-gray-900 hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="text-center text-gray-500">
+            <img
+              class="mx-auto mb-4 w-36 h-36 rounded-full"
+              src="{{ url_for('static', filename='images/helmi.jpg') }}"
+              alt="Helmi"
+            />
+            <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">
+              <a href="#">Helmi Putra Noor P</a>
+            </h3>
+            <p>Analyst</p>
+            <ul class="flex justify-center mt-4 space-x-4">
+              <li>
+                <a href="#" class="text-[#39569c] hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="text-gray-900 hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="text-center text-gray-500">
+            <img
+              class="mx-auto mb-4 w-36 h-36 rounded-full"
+              src="{{ url_for('static', filename='images/fittra.jpg') }}"
+              alt="Fittra"
+            />
+            <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">
+              <a href="#">Fittra Marga Ardana</a>
+            </h3>
+            <p>Frontend</p>
+            <ul class="flex justify-center mt-4 space-x-4">
+              <li>
+                <a href="#" class="text-[#39569c] hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="text-gray-900 hover:text-gray-900">
+                  <svg
+                    class="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

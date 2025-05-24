@@ -1,0 +1,14 @@
+{
+  "name": "restoraso-citra",
+  "version": "1.0.0",
+  "scripts": {
+    "build-css": "tailwindcss -i ./static/css/input.css -o ./static/dist/output.css"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.7",
+    "tailwindcss": "^4.1.7"
+  },
+  "dependencies": {
+    "flowbite": "^3.1.2"
+  }
+}

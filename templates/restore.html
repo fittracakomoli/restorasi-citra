@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restorasi Noise</title>
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='dist/output.css')}}"
+    />
+  </head>
+  <body>
+    <nav x-data="{ open: false }" class="fixed w-full">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-24">
+          <!-- Logo -->
+          <a
+            href="/"
+            class="-m-1.5 p-1.5 flex items-center gap-6 text-gray-900"
+          >
+            <span class="sr-only">Hima Ilkom UNNES</span>
+            <img
+              class="h-10 w-auto"
+              src="{{ url_for('static', filename='images/abar.png') }}"
+              alt="Logo"
+            />
+            <div>
+              <p class="font-bold text-lg">RESTORASI CITRA</p>
+              <p class="text-sm">Pengolahan Citra</p>
+            </div>
+          </a>
+
+          <!-- Navigation Links -->
+          <div class="hidden space-x-8 md:-my-px md:ms-10 md:flex">
+            <a
+              href="/"
+              class="inline-flex items-center px-1 pt-1 border-b-4 border-transparent text-md font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-primary-700 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out {% if active == 'index' %}border-b-4 border-primary-700 text-gray-900{% endif %}"
+            >
+              Beranda
+            </a>
+            <a
+              href="/noisy"
+              class="inline-flex items-center px-1 pt-1 border-b-4 border-transparent text-md font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-primary-700 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out {% if active == 'noisy' %}border-b-4 border-primary-700 text-gray-900{% endif %}"
+            >
+              Tambahkan Noise
+            </a>
+            <a
+              href="/restore"
+              class="inline-flex items-center px-1 pt-1 border-b-4 border-transparent text-md font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-primary-700 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out {% if active == 'restore' %}border-b-4 border-primary-700 text-gray-900{% endif %}"
+            >
+              Hilangkan Noise
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="pt-24 bg-gray-50">
+      <div
+        class="p-4 mx-auto grid-cols-2 grid gap-8 max-w-screen-xl text-center"
+      >
+        <div class="left w-full">
+          <h3 class="text-left text-xl mb-4 font-medium">Citra dengan Noise</h3>
+          <input
+            class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+            aria-describedby="file_input_help"
+            id="imageInput"
+            type="file"
+          />
+          <p class="mt-1 text-left text-sm text-gray-500" id="file_input_help"
+            >SVG, PNG, JPG or GIF (MAX. 800x400px).</p
+          >
+
+          <img id="imgBefore" class="w-full my-4" />
+
+          <div>
+            <h4 class="text-left text-md font-medium mb-2"
+              >Ukuran Citra dalam Piksel</h4
+            >
+            <div class="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                id="imageWidth"
+                aria-label="disabled input"
+                class="mb-6 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed"
+                value="Width"
+                disabled
+              />
+              <input
+                type="text"
+                id="imageHeight"
+                aria-label="disabled input"
+                class="mb-6 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed"
+                value="Height"
+                disabled
+              />
+            </div>
+          </div>
+          <label
+            for="noiseSelect"
+            class="block mb-2 text-md font-medium text-gray-900 text-left"
+            >Pilih Jenis Noise</label
+          >
+          <select
+            id="noiseSelect"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          >
+            <option selected>Pilih Noise</option>
+            <option value="salt_pepper">Salt & Pepper</option>
+            <option value="gaussian">Gaussian</option>
+            <option value="periodic">Periodic</option>
+          </select>
+
+          <label
+            for="filterSelect"
+            class="block my-2 text-md font-medium text-gray-900 text-left"
+            >Pilih Jenis Filter</label
+          >
+          <select
+            id="filterSelect"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          >
+          </select>
+
+          <button
+            class="my-4 bg-gray-900 text-white px-4 py-3 rounded-lg w-full cursor-pointer hover:bg-gray-600"
+            onclick="uploadImage()"
+            >Restorasi</button
+          >
+        </div>
+
+        <div class="right w-full">
+          <h3 class="mb-4 text-left text-xl font-medium"
+            >Citra Setelah Direstorasi</h3
+          >
+          <img id="imgAfter" class="w-full mb-4" />
+
+          <label
+            for="maseValue"
+            class="block mb-2 text-md font-medium text-gray-900 text-left"
+            >Nilai MSE</label
+          >
+          <input
+            type="text"
+            id="mseValue"
+            aria-label="disabled input"
+            class="mb-6 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed"
+            value="MSE"
+            disabled
+          />
+
+          <button
+            id="downloadBtn"
+            style="display: none"
+            class="bg-gray-900 text-white px-4 py-3 rounded-lg w-full cursor-pointer hover:bg-gray-600"
+            >Download Gambar Restorasi</button
+          >
+        </div>
+      </div>
+    </section>
+
+    <script src="/static/script_restore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+  </body>
+</html>

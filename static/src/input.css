@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../../node_modules/flowbite";
+
+body {
+  background-color: #e9dad1;
+}
+
+section {
+  background-color: #e9dad1;
+}
+
+nav {
+  background-color: #d29f80;
+}
+
+.btn1 {
+  background-color: #d29f80;
+}
+
+.btn1:hover {
+  background-color: #604652;
+  color: white;
+}
+
+.btn2:hover {
+  background-color: #d29f80;
+  color: black;
+  border-color: #d29f80;
+}
