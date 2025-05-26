@@ -5,7 +5,7 @@ const filtersByNoise = {
   ],
   gaussian: [
     { value: "gaussian", text: "Gaussian Filter" },
-    { value: "wiener", text: "Wiener Filter" },
+    { value: "harmonic_mean", text: "Rerata Harmonic" },
   ],
   periodic: [
     { value: "notch", text: "Notch Filter" },

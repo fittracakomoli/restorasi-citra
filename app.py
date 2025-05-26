@@ -69,6 +69,37 @@ def remove_periodic_noise(img, notch_centers, d0=10, order=1):
     img_restored = np.clip(img_restored, 0, 255).astype(np.uint8)
     return img_restored
 
+def harmonic_mean_filter(img, kernel_size=3):
+    # Pastikan kernel_size ganjil
+    assert kernel_size % 2 == 1, "Kernel size harus ganjil"
+    
+    # Padding citra supaya ukuran output sama
+    pad = kernel_size // 2
+    padded_img = np.pad(img, pad, mode='constant', constant_values=0)
+    
+    # Output citra hasil filter
+    filtered_img = np.zeros_like(img, dtype=np.float64)
+    
+    rows, cols = img.shape
+    
+    for i in range(rows):
+        for j in range(cols):
+            # Ambil window kernel
+            window = padded_img[i:i+kernel_size, j:j+kernel_size]
+            
+            # Hindari pembagian dengan nol, ganti nol dengan nilai kecil (misal 1e-6)
+            window_safe = np.where(window == 0, 1e-6, window)
+            
+            # Hitung rata-rata harmonik
+            n = window.size
+            harmonic_mean = n / np.sum(1.0 / window_safe)
+            
+            filtered_img[i, j] = harmonic_mean
+    
+    # Konversi kembali ke uint8 dan clipping
+    filtered_img = np.clip(filtered_img, 0, 255).astype(np.uint8)
+    return filtered_img
+
 # Fungsi filter lain dan adaptive median
 def adaptive_median_filter(img, max_size=7):
     import copy
@@ -112,9 +143,8 @@ def apply_filter(img, noise_type, filter_type):
     elif noise_type == 'gaussian':
         if filter_type == 'gaussian':
             return cv2.GaussianBlur(img, (5,5), 0)
-        elif filter_type == 'wiener':
-            from scipy.signal import wiener
-            return wiener(img, (5,5)).astype(np.uint8)
+        elif filter_type == 'harmonic_mean':
+            return harmonic_mean_filter(img, kernel_size=3)
     elif noise_type == 'periodic':
         if filter_type == 'notch':
             a, b = img.shape
